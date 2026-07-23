@@ -1,0 +1,10 @@
+{
+  "environments": {
+    "uat-testnet": {
+      "android": "https://play.google.com/store/apps/details?id=com.hextrust.hexsafe.uat",
+      "ios": "https://apps.apple.com/app/hexsafe-uat/id...",
+      "testflight": "https://testflight.apple.com/join/DFxBc1t5",
+      "android_apk": "https://github.com/hextrust/hextrust-mobile/releases/download/2.0.4%2B68/sandbox-2.0.4+68.apk"
+    }
+  }
+}
