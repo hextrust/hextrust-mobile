@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>HexTrust App Redirect</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<style>
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			min-height: 100vh;
+			margin: 0;
+			background: #f5f5f7;
+			color: #1d1d1f;
+		}
+		.container {
+			text-align: center;
+			padding: 2rem;
+			max-width: 500px;
+		}
+		h1 { font-size: 1.5rem; font-weight: 600; }
+		p { color: #6e6e73; line-height: 1.5; }
+		.links { margin-top: 1.5rem; }
+		.links a {
+			display: inline-block;
+			margin: 0.5rem;
+			padding: 0.75rem 1.5rem;
+			border-radius: 12px;
+			background: #0071e3;
+			color: #fff;
+			text-decoration: none;
+			font-weight: 500;
+			font-size: 0.9rem;
+		}
+		.links a:hover { background: #0077ed; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Redirecting...</h1>
+		<p>If you are not redirected automatically, choose your platform below:</p>
+		<div class="links" id="fallback-links"></div>
+	</div>
+
+<script>
+	(async function() {
+		var userAgent = navigator.userAgent.toLowerCase();
+		var isAndroid = userAgent.indexOf('android') !== -1;
+		var isIOS = /iphone|ipad|ipod/.test(userAgent);
+
+		// Determine environment from hostname
+		var hostname = window.location.hostname;
+		var isProd = hostname === 'app-redirect.hexsafe.hextrust.com';
+		var isSandbox = hostname.indexOf('sandbox') !== -1;
+		var isUAT = !isProd && !isSandbox; // uat-testnet, beta, staging, etc.
+
+		try {
+			var response = await fetch('redirects.json');
+			var config = await response.json();
+			var env = isProd ? 'prod' : isSandbox ? 'sandbox' : 'uat-testnet';
+			var envConfig = config.environments[env];
+
+			if (isAndroid) {
+				// Check if this is a GitHub Releases APK URL
+				if (envConfig.android_apk) {
+					window.location.href = envConfig.android_apk;
+				} else if (envConfig.android) {
+					window.location.href = envConfig.android;
+				}
+			} else if (isIOS) {
+				if (envConfig.testflight) {
+					window.location.href = envConfig.testflight;
+				} else if (envConfig.ios) {
+					window.location.href = envConfig.ios;
+				}
+			}
+
+			// Fallback: render manual links
+			renderFallback(envConfig);
+		} catch (e) {
+			console.error('Failed to load config:', e);
+			// Hardcoded fallback
+			renderFallback({
+				android: 'https://play.google.com/store/apps/details?id=com.hextrust.hexsafe',
+				ios: 'https://apps.apple.com/app/hexsafe/id...',
+				testflight: 'https://testflight.apple.com/join/DFxBc1t5',
+				android_apk: 'https://github.com/hextrust/hextrust-mobile/releases'
+			});
+		}
+
+		function renderFallback(config) {
+			var container = document.getElementById('fallback-links');
+			container.innerHTML = '';
+			if (config.android || config.android_apk) {
+				var a = document.createElement('a');
+				a.href = config.android_apk || config.android;
+				a.textContent = 'Download for Android';
+				container.appendChild(a);
+			}
+			if (config.testflight || config.ios) {
+				var a = document.createElement('a');
+				a.href = config.testflight || config.ios;
+				a.textContent = 'Download for iOS';
+				container.appendChild(a);
+			}
+		}
+	})();
+</script>
+
+</body>
+</html>
