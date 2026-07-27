@@ -55,7 +55,6 @@
 		var hostname = window.location.hostname;
 		var isProd = hostname === 'app-redirect.hexsafe.hextrust.com';
 		var isSandbox = hostname.indexOf('sandbox') !== -1;
-		var isUAT = !isProd && !isSandbox; // uat-testnet, beta, staging, etc.
 
 		try {
 			var response = await fetch('redirects.json');
