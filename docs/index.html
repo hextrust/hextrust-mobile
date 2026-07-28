@@ -51,15 +51,17 @@
 		var isAndroid = userAgent.indexOf('android') !== -1;
 		var isIOS = /iphone|ipad|ipod/.test(userAgent);
 
-		// Determine environment from hostname
+		// Determine environment from URL path
 		var hostname = window.location.hostname;
+		var pathPrefix = window.location.pathname.split('/')[1];
 		var isProd = hostname === 'app-redirect.hexsafe.hextrust.com';
-		var isSandbox = hostname.indexOf('sandbox') !== -1;
+		var isSandboxPath = pathPrefix === 'sandbox';
+		var isUatPath = pathPrefix === 'uat';
 
 		try {
 			var response = await fetch('redirects.json');
 			var config = await response.json();
-			var env = isProd ? 'prod' : isSandbox ? 'sandbox' : 'uat-testnet';
+			var env = isProd ? 'prod' : isSandboxPath ? 'sandbox' : isUatPath ? 'uat-testnet' : 'uat-testnet';
 			var envConfig = config.environments[env];
 
 			if (isAndroid) {
@@ -75,7 +77,7 @@
 				} else if (envConfig.ios) {
 					window.location.href = envConfig.ios;
 				}
-			} else if (isSandbox && envConfig.testflight) {
+			} else if (isSandboxPath && envConfig.testflight) {
 				// Sandbox: redirect desktop users to TestFlight too
 				window.location.href = envConfig.testflight;
 			}
