@@ -75,6 +75,9 @@
 				} else if (envConfig.ios) {
 					window.location.href = envConfig.ios;
 				}
+			} else if (isSandbox && envConfig.testflight) {
+				// Sandbox: redirect desktop users to TestFlight too
+				window.location.href = envConfig.testflight;
 			}
 
 			// Fallback: render manual links
