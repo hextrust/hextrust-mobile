@@ -2,7 +2,7 @@
 a wrapper to share public packages
 
 
-How to Publish/Update the App Redirect Page
+**How to Publish/Update the App Redirect Page**
 Repo: hextrust/hextrust-mobile — hosted at https://app-redirect.hexsafe.hextech.io/
 
 Environments (via URL param)
