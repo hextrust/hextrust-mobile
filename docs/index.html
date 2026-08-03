@@ -62,7 +62,7 @@
 		try {
 			var response = await fetch('redirects.json');
 			var config = await response.json();
-			var env = isProd ? 'prod' : isSandboxParam ? 'sandbox' : isUatParam ? 'uat-testnet' : 'uat-testnet';
+			var env = isProd ? 'prod' : isSandboxParam ? 'sandbox' : isUatParam ? 'uat-testnet' : 'sandbox';
 			var envConfig = config.environments[env];
 
 			if (isAndroid) {
